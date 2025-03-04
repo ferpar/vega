@@ -1,20 +1,24 @@
-import { observer} from '@legendapp/state/react'
+import { observer } from '@legendapp/state/react'
+import { auth$ } from './core/AuthStore'
 import { router$ } from './core/RouterStore'
 import { Main } from './components/Main'
 import { Login } from './components/Login'
 import { Profile } from './components/Profile'
+import { Logout } from './components/Logout'
 import './App.css'
 
-function App() {
+const App = observer(() => {
   const currentRoute = router$.currentRoute.get()
+  const token = auth$.token.get()
 
   return (
     <>
-    {currentRoute === 'home' && <Main />}
-    {currentRoute === 'login' && <Login />}
-    {currentRoute === 'profile' && <Profile />}
+      {token && <Logout />}
+      {currentRoute === 'home' && <Main />}
+      {currentRoute === 'login' && <Login />}
+      {currentRoute === 'profile' && <Profile />}
     </>
   )
-}
+})
 
 export default App
