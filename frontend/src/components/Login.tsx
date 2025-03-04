@@ -1,5 +1,5 @@
 import { observer } from "@legendapp/state/react";
-import { AuthPresenter } from "../core/Auth";
+import { AuthService } from "../core/Auth";
 
 export const Login = observer(() => {
     const handleSubmit = async (e: React.FormEvent) => {
@@ -7,7 +7,7 @@ export const Login = observer(() => {
         const form = e.target as HTMLFormElement;
         const username = form.username.value;
         const password = form.password.value;
-        await AuthPresenter.login(username, password);
+        await AuthService.login(username, password);
     }
 
     return (

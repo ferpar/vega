@@ -1,27 +1,13 @@
 import { auth$ } from "./AuthStore";
 import { router$ } from "./RouterStore";
 
-const API_URL = import.meta.env.VITE_API_URL as string;
-
-export const AuthPresenter = {
+export const AuthService = {
     login: async (username: string, password: string) => {
-        const response = await fetch(`${API_URL}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await response.json();
-        auth$.setToken(data.accessToken);
-        router$.navigate('home');
+        await auth$.login(username, password);
+        if (auth$.token.get()) router$.navigate('home');
     },
     logout: async () => {
-        await fetch(`${API_URL}/logout`, {
-            method: 'POST',
-        });
-        auth$.setToken('');
-        router$.navigate('login');
+        await auth$.logout();
+        if (!auth$.token.get()) router$.navigate('login');
     }
-
 }
