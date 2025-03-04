@@ -13,11 +13,15 @@ export const Login = observer(() => {
     return (
         <div className="container mx-auto p-4" onSubmit={handleSubmit}>
             <h1>Login</h1>
-            <form>
-                <label htmlFor="username">Username</label>
-                <input type="text" id="username" name="username" />
-                <label htmlFor="password">Password</label>
-                <input type="password" id="password" name="password" />
+            <form className="flex flex-col space-y-4 max-w-sm mx-auto">
+                <div>
+                    <label htmlFor="username">Username</label>
+                    <input type="text" id="username" name="username" />
+                </div>
+                <div>
+                    <label htmlFor="password">Password</label>
+                    <input type="password" id="password" name="password" />
+                </div>
                 <button type="submit">Login</button>
             </form>
         </div>
