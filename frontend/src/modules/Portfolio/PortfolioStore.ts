@@ -1,6 +1,6 @@
 import { observable } from "@legendapp/state";
 import { auth$ } from "../../core/AuthStore";
-import type { Asset, Portfolio, Price } from "../../core/types";
+import type { Asset, Portfolio, Price } from "./types";
 
 type PortfolioStore = {
     assets: Asset[];
