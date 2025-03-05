@@ -1,10 +1,18 @@
 import { portfolio$ } from "../core/PortfolioStore"
 import { observer } from "@legendapp/state/react"
+import { DonutChart } from "./DonutChart/DonutChart"
 
 export const Main = observer(() => {
     const assets = portfolio$.assets.get()  
     const prices = portfolio$.prices.get()
     const portfolio = portfolio$.portfolio.get()
+
+    const donutData = portfolio?.positions.map(position => {
+        const label = position.asset
+        const value = position.price * position.quantity
+        return  { label, value }
+    })
+
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-4xl font-bold text-center">Vite + React + TailwindCSS</h1>
@@ -27,6 +35,7 @@ export const Main = observer(() => {
                     <li key={position.id}>{position.asset}: {position.quantity}</li>
                 ))}
             </ul>
+            <DonutChart data={donutData}/>
 
         </div>
     )
