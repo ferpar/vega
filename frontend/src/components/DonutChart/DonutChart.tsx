@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { motion } from 'motion/react'
 
 type DonutChartProps = {
     data?: { label: string, value: number }[];
@@ -31,9 +32,11 @@ export const DonutChart = ({data = defaultData}: DonutChartProps) => {
         const arcPath = arc(d) || '';
         return (
         <g key={i}>
-            <path
+            <motion.path
                 d={arcPath}
                 fill={color(i.toString())}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
             />
             <text
                 transform={`translate(${arc.centroid(d)})`}
