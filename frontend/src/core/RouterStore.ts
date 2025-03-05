@@ -1,6 +1,6 @@
 import { observable } from "@legendapp/state";
 import { auth$ } from "./AuthStore";
-import { portfolio$ } from "./PortfolioStore";
+import { portfolio$ } from "../modules/Portfolio/PortfolioStore";
 
 const routeObjects = [
     {

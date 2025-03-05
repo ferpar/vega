@@ -1,4 +1,4 @@
-import { portfolioPresenter$ } from "../core/PortfolioPresenter"
+import { portfolioPresenter$ } from "../modules/Portfolio/PortfolioPresenter"
 import { observer } from "@legendapp/state/react"
 import { DonutChart } from "./DonutChart/DonutChart"
 

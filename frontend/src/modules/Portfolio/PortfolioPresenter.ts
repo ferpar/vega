@@ -25,7 +25,6 @@ export const portfolioPresenter$ = observable({
             const assets = portfolio$.assets.get()
             const breakdownObj = portfolio?.positions.reduce((acc, position) => {
                 const asset = assets.find((asset) => asset.asset === position.asset)
-                console.log(asset)
                 const type = asset?.type
                 if (!type) return acc
                 acc[type] += position.quantity * position.price
