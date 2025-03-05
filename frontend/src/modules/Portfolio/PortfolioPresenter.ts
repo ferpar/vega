@@ -22,6 +22,8 @@ export const portfolioPresenter$ = observable({
                 // id: position.id,
                 label: position.asset,
                 value: position.quantity * position.price,
+                price: position.price,
+                quantity: position.quantity,
             }));
         } else {
             // Group by asset type

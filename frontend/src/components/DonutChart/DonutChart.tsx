@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 
 type DonutChartProps = {
     data?: { label: string; value: number }[];
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 const defaultData = [
     { label: "A", value: 10 },
     { label: "B", value: 20 },
@@ -11,7 +11,7 @@ const defaultData = [
     { label: "D", value: 50 },
 ];
 
-export const DonutChart = ({ data = defaultData }: DonutChartProps) => {
+export const DonutChart = ({ data = defaultData, ...delegated }: DonutChartProps) => {
     const width = 400;
     const height = 400;
     const radius = Math.min(width, height) / 2;
@@ -62,6 +62,7 @@ export const DonutChart = ({ data = defaultData }: DonutChartProps) => {
                 alignItems: "center",
                 flexDirection: "column",
             }}
+            {...delegated}
         >
             <svg
                 style={{ width: "100%", height: "100%" }}

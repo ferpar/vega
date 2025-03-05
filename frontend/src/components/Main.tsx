@@ -1,37 +1,21 @@
 import { portfolioPresenter$ } from "../modules/Portfolio/PortfolioPresenter";
 import { observer } from "@legendapp/state/react";
 import { DonutChart } from "./DonutChart/DonutChart";
+import { PositionsTable } from "./PositionsTable/PositionsTable";
 
 export const Main = observer(() => {
-    const assets = portfolioPresenter$.assets();
-    const prices = portfolioPresenter$.prices();
-    const portfolio = portfolioPresenter$.portfolio();
-
     const positionData = portfolioPresenter$.positions();
+    const isGroupByAssetType = portfolioPresenter$.groupByAssetType.get();
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="width-full p-4">
             <h1 className="text-4xl font-bold text-center">
-                Vite + React + TailwindCSS
+                Portfolio
             </h1>
             <p className="text-center">
-                This is a simple starter template for Vite + React + TailwindCSS
+                Check out your assets and positions
             </p>
-            <h2 className="text-2xl font-bold mt-8">Assets</h2>
-            <ul>
-                {assets &&
-                    assets.map((asset) => (
-                        <li key={asset.id}>{asset.asset}</li>
-                    ))}
-            </ul>
-            <h2 className="text-2xl font-bold mt-8">Prices</h2>
-            <ul>
-                {prices &&
-                    prices.map((price) => (
-                        <li key={price.id}>{price.price}</li>
-                    ))}
-            </ul>
-            <div className="flex align-center justify-between mt-8">
+            <div className="flex align-center justify-between mt-16">
                 <h2 className="text-2xl font-bold">Portfolio</h2>
                 <div>
                     <button
@@ -43,15 +27,14 @@ export const Main = observer(() => {
                     </button>
                 </div>
             </div>
-            <DonutChart data={positionData} />
-            <ul>
-                {portfolio &&
-                    portfolio.positions.map((position) => (
-                        <li key={position.id}>
-                            {position.asset}: {position.quantity}
-                        </li>
-                    ))}
-            </ul>
+            <div className="flex flex-col lg:flex-row gap-4 mt-8">
+                <DonutChart className="flex-1" data={positionData} />
+                <PositionsTable
+                    className="flex-1"
+                    data={positionData}
+                    grouped={isGroupByAssetType}
+                />
+            </div>
         </div>
     );
 });
