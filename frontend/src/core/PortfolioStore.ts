@@ -24,9 +24,8 @@ export const portfolio$ = observable<PortfolioStore>({
                 Authorization: `Bearer ${auth$.token.get()}`,
             }
         });
-            const data = await response.json();
-        console.log(data);
-            portfolio$.assets.set(data || []);
+        const data = await response.json();
+        portfolio$.assets.set(data || []);
     },
     loadPrices: async () => {
         const response = await fetch(`${API_URL}/prices`,
@@ -37,7 +36,6 @@ export const portfolio$ = observable<PortfolioStore>({
             }
         );
         const data = await response.json();
-        console.log(data);
         portfolio$.prices.set(data);
     },
     loadPortfolio: async () => {
@@ -47,7 +45,6 @@ export const portfolio$ = observable<PortfolioStore>({
             }
         });
         const data = await response.json();
-        console.log(data);
         portfolio$.portfolio.set(data);
     },
     init: async () => {
@@ -55,5 +52,5 @@ export const portfolio$ = observable<PortfolioStore>({
         await portfolio$.loadAssets();
         await portfolio$.loadPrices();
         await portfolio$.loadPortfolio();
-    } 
+    }
 })

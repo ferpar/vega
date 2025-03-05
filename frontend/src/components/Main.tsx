@@ -1,17 +1,13 @@
-import { portfolio$ } from "../core/PortfolioStore"
+import { portfolioPresenter$ } from "../core/PortfolioPresenter"
 import { observer } from "@legendapp/state/react"
 import { DonutChart } from "./DonutChart/DonutChart"
 
 export const Main = observer(() => {
-    const assets = portfolio$.assets.get()  
-    const prices = portfolio$.prices.get()
-    const portfolio = portfolio$.portfolio.get()
+    const assets = portfolioPresenter$.assets()  
+    const prices = portfolioPresenter$.prices()
+    const portfolio = portfolioPresenter$.portfolio()
 
-    const donutData = portfolio?.positions.map(position => {
-        const label = position.asset
-        const value = position.price * position.quantity
-        return  { label, value }
-    })
+    const positionData = portfolioPresenter$.positions()
 
     return (
         <div className="container mx-auto p-4">
@@ -29,13 +25,20 @@ export const Main = observer(() => {
                     <li key={price.id}>{price.price}</li>
                 ))}
             </ul>
+            <div>
+
             <h2 className="text-2xl font-bold mt-8">Portfolio</h2>
+            <button onClick={portfolioPresenter$.toggleGroupByAssetType}>
+                {portfolioPresenter$.groupByAssetType.get() ? "Ungroup" : "Group by asset type"}
+            </button>
+            </div>
+            
+            <DonutChart data={positionData}/>
             <ul>
                 {portfolio && portfolio.positions.map(position => (
                     <li key={position.id}>{position.asset}: {position.quantity}</li>
                 ))}
             </ul>
-            <DonutChart data={donutData}/>
 
         </div>
     )

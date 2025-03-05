@@ -21,7 +21,7 @@ export const DonutChart = ({data = defaultData}: DonutChartProps) => {
         .innerRadius(radius - 100)
         .outerRadius(radius - 20);
 
-    const arcData = d3.pie<{ label: string, value: number }>()
+    const arcData = d3.pie<{ label: string, value: number }>().padAngle(0.02)
         .value(d => d.value)(data);
     
     const arcDataWithRadii = arcData.map(d => {
