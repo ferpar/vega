@@ -11,10 +11,21 @@ export const portfolioPresenter$ = observable({
     assets: () => portfolio$.assets.get(),
     prices: () => portfolio$.prices.get(),
     portfolio: () => portfolio$.portfolio.get(),
+    portfolioHistory: () => {
+        const portfolios = portfolio$.portfolios.get();
+        return portfolios?.map((portfolio) => ({
+            date: portfolio.asOf,
+            value: portfolio.positions.reduce(
+                (acc, position) => acc + position.quantity * position.price,
+                0
+            ),
+        }));
+    },
     positions: () => {
         const portfolio = portfolio$.portfolio.get();
         // If no portfolio, return empty array
         if (!portfolio) return [];
+        if (!portfolio.positions) return [];
 
         // If not grouping by asset type, return positions as is
         if (!portfolioPresenter$.groupByAssetType.get() && portfolio) {

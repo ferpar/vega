@@ -2,13 +2,16 @@ import { portfolioPresenter$ } from "../modules/Portfolio/PortfolioPresenter";
 import { observer } from "@legendapp/state/react";
 import { DonutChart } from "./DonutChart/DonutChart";
 import { PositionsTable } from "./PositionsTable/PositionsTable";
+import { HistoricalChart } from "./HistoricalChart/HistoricalChart";
 
 export const Main = observer(() => {
     const positionData = portfolioPresenter$.positions();
     const isGroupByAssetType = portfolioPresenter$.groupByAssetType.get();
+    const porfolioHistory = portfolioPresenter$.portfolioHistory();
+    console.log(porfolioHistory);
 
     return (
-        <div className="width-full p-4">
+        <div className="min-w-[80vw] p-4">
             <h1 className="text-4xl font-bold text-center">
                 Portfolio
             </h1>
@@ -35,6 +38,7 @@ export const Main = observer(() => {
                     grouped={isGroupByAssetType}
                 />
             </div>
+            <HistoricalChart data={porfolioHistory} />
         </div>
     );
 });

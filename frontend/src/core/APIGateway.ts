@@ -4,46 +4,56 @@ import { WretchError } from 'wretch/resolver'
 export class HttpGateway {
     private wretch: Wretch;
     private withRefresh: boolean;
+    // private refreshCount: number = 0;
+    // private maxRefreshCount: number = 3;
 
     constructor(baseURL: string, token?: string, withRefresh: boolean = false) {
         this.withRefresh = withRefresh;
         this.wretch = wretch(baseURL, token ? { headers: { Authorization: `Bearer ${token}` } } : {})
-            .catcher(401, async (_, originalReq) => {
-                if (this.withRefresh) {
-                    // refresh the token
-                    const response = await fetch(`${baseURL}/refresh`, {
-                        method: 'POST',
-                    });
-                    const data = await response.json();
-                    this.wretch = wretch(baseURL, { headers: { Authorization: `Bearer ${data.accessToken}` } });
-                    //retry the original request
-                    return originalReq
-                        .auth(`Bearer ${data.accessToken}`)
-                        .fetch()
-                        .unauthorized(err => {throw err})
-                        .json()
-                } else {
-                    throw new Error("Unauthorized");
-                }
-            })
-            .catcher(403, async (_, originalReq) => {
-                if (this.withRefresh) {
-                    // refresh the token
-                    const response = await fetch(`${baseURL}/refresh`, {
-                        method: 'POST',
-                    });
-                    const data = await response.json();
-                    this.wretch = wretch(baseURL, { headers: { Authorization: `Bearer ${data.accessToken}` } });
-                    // retry the original request
-                    return originalReq
-                        .auth(`Bearer ${data.accessToken}`)
-                        .fetch()
-                        .unauthorized(err => {throw err})
-                        .json()
-                } else {
-                    throw new Error("Forbidden");
-                }
-            })
+            // .catcher(401, async (_, originalReq) => {
+            //     if (this.withRefresh) {
+            //         if (this.refreshCount >= this.maxRefreshCount) {
+            //             throw new Error("Unauthorized");
+            //         }
+            //         this.refreshCount++;
+            //         // refresh the token
+            //         const response = await fetch(`${baseURL}/refresh`, {
+            //             method: 'POST',
+            //         });
+            //         const data = await response.json();
+            //         this.wretch = wretch(baseURL, { headers: { Authorization: `Bearer ${data.accessToken}` } });
+            //         //retry the original request
+            //         return originalReq
+            //             .auth(`Bearer ${data.accessToken}`)
+            //             .fetch()
+            //             .unauthorized(err => {throw err})
+            //             .json()
+            //     } else {
+            //         throw new Error("Unauthorized");
+            //     }
+            // })
+            // .catcher(403, async (_, originalReq) => {
+            //     if (this.withRefresh) {
+            //         if (this.refreshCount >= this.maxRefreshCount) {
+            //             throw new Error("Forbidden");
+            //         }
+            //         this.refreshCount++;
+            //         // refresh the token
+            //         const response = await fetch(`${baseURL}/refresh`, {
+            //             method: 'POST',
+            //         });
+            //         const data = await response.json();
+            //         this.wretch = wretch(baseURL, { headers: { Authorization: `Bearer ${data.accessToken}` } });
+            //         // retry the original request
+            //         return originalReq
+            //             .auth(`Bearer ${data.accessToken}`)
+            //             .fetch()
+            //             .unauthorized(err => {throw err})
+            //             .json()
+            //     } else {
+            //         throw new Error("Forbidden");
+            //     }
+            // })
             .catcherFallback(async (error) => {
                 console.error("unexpected error fetching", error);
                 throw new Error((error as WretchError).text);

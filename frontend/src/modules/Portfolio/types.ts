@@ -14,12 +14,12 @@ export type Position = {
     id: number;
     asset: string; //uuid
     quantity: number;
-    asOf: Date;
+    asOf: string;
     price: number;    
 }
 
 export type Portfolio = {
     id: string; //uuid
-    asOf: Date;
+    asOf: string;
     positions: Position[];
 }

@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
+const { assetsFn, pricesFn, portfoliosFn } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -105,23 +106,13 @@ app.get("/protected", authenticateToken, (req, res) => {
 });
 
 app.get("/assets", authenticateToken, (req, res) => {
-    res.json([
-        { id: 1, asset: "AAPL", type: "stock" },
-        { id: 2, asset: "GOOGL", type: "stock" },
-        { id: 3, asset: "TSLA", type: "stock" },
-        { id: 4, asset: "BTC", type: "crypto" }
-    ])
+    res.json(assetsFn())
 })
 
 // query params: /prices?assets=AAPL,GOOGL&asOf=2021-08-01
 app.get("/prices", authenticateToken, (req, res) => {
     const assets = req.query.assets ? req.query.assets.split(",") : null;
-    const prices = [
-        { id: 1, asset: "AAPL", price: 145.12 },
-        { id: 2, asset: "GOOGL", price: 2732.23 },
-        { id: 3, asset: "TSLA", price: 678.90 },
-        { id: 4, asset: "BTC", price: 45000.00 }
-    ]
+    const prices = pricesFn()
 
     const filteredPrices = !assets ? prices : prices.filter(p => assets.includes(p.asset));
 
@@ -130,16 +121,9 @@ app.get("/prices", authenticateToken, (req, res) => {
 
 // query params: /positions?asOf=2021-08-01
 app.get("/portfolios", authenticateToken, (req, res) => {
-    const portfolio = {
-        id: 1,
-        asOf: new Date().toISOString(),
-        positions: [
-            { id: 1, asset: "AAPL", quantity: 100, asOf: new Date().toISOString(), price: 145.12 },
-            { id: 2, asset: "GOOGL", quantity: 50, asOf: new Date().toISOString(), price: 2732.23 },
-            { id: 3, asset: "TSLA", quantity: 25, asOf: new Date().toISOString(), price: 678.90 },
-            { id: 4, asset: "BTC", quantity: 1, asOf: new Date().toISOString(), price: 45000.00 }
-        ]
-    }
+    const asOf = req.query.asOf ? req.query.asOf.split(",") : ['2021-08-01']
+    const portfolio = portfoliosFn(asOf)
+
     res.json(portfolio)
 })
 
