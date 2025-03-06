@@ -25,7 +25,7 @@ const refreshTokens = [];
 
 // Generate Access Token
 const generateAccessToken = (user) => {
-    return jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: "15m" });
+    return jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: "60m" });
 };
 
 // Generate Refresh Token

@@ -22,9 +22,16 @@ export const auth$ = observable({
         await httpGateway.post("/logout", {});
         auth$.setToken("");
     },
+    refresh: async () => {
+        const data = await httpGateway.post<{ accessToken: string }>("/refresh", {});
+        console.log("refreshed token", data.accessToken);
+        auth$.setToken(data.accessToken);
+    }
 });
 
 persistObservable(auth$.token, {
     local: "auth",
     pluginLocal: ObservablePersistLocalStorage,
 });
+
+export type AuthStore = typeof auth$;

@@ -29,7 +29,8 @@ type PortfolioStore = {
 };
 
 const API_URL = import.meta.env.VITE_API_URL as string;
-const httpGateway = new HttpGateway(API_URL, '', true);
+const httpGateway = new HttpGateway(API_URL, auth$, true);
+
 
 export const portfolio$ = observable<PortfolioStore>({
     asOf: "2021-08-01",
@@ -38,35 +39,22 @@ export const portfolio$ = observable<PortfolioStore>({
     portfolio: null,
     portfolios: [],
     loadAssets: async () => {
-        console.log('loading assets')
-        let data;
-        try {
-            console.log('trying to get assets')
-            data = await httpGateway.get<Asset[]>("/assets", auth$.token.get());
-        } catch (error) {
-            console.error('error getting assets', error)
-            if (error instanceof Error && (error.message === "Forbidden" || error.message === "Unauthorized")) {
-                console.log('forbidden / unauthorized error, logging out')
-                await AuthService.logout();
-            }
-        }
+        const data = await safeFetch<Asset[]>("/assets");
         portfolio$.assets.set(data || []);
     },
     loadPrices: async () => {
-        const data = await httpGateway.get<Price[]>("/prices", auth$.token.get());
+        const data = await safeFetch<Price[]>("/prices");
         portfolio$.prices.set(data);
     },
     loadPortfolio: async () => {
-        const data = await httpGateway.get<Portfolio[]>(
-            `/portfolios?asOf=${portfolio$.asOf.get()}`,
-            auth$.token.get()
+        const data = await safeFetch<Portfolio[]>(
+            `/portfolios?asOf=${portfolio$.asOf.get()}`
         );
         portfolio$.portfolio.set(data[0]);
     },
     loadPorfolios: async () => {
-        const data = await httpGateway.get<Portfolio[]>(
-            `/portfolios?asOf=${availableDates.join(",")}`,
-            auth$.token.get()
+        const data = await safeFetch<Portfolio[]>(
+            `/portfolios?asOf=${availableDates.join(",")}`
         );
         portfolio$.portfolios.set(data);
     },
@@ -78,3 +66,23 @@ export const portfolio$ = observable<PortfolioStore>({
         await portfolio$.loadPorfolios();
     },
 });
+
+
+
+const safeFetch = async <T>(url: string, method: "get" | "post" = "get", body?: any): Promise<T> => {
+    let data
+    try {
+        data = await httpGateway[method]<any>(url, body);
+    } catch (error) {
+        console.error("error fetching", error);
+        if (
+            error instanceof Error &&
+            (error.message === "Forbidden" ||
+                error.message === "Unauthorized")
+        ) {
+            console.error("forbidden / unauthorized error, logging out");
+            await AuthService.logout();
+        }
+    }
+    return data;
+};

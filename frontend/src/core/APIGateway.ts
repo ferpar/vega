@@ -1,17 +1,17 @@
 import wretch, { Wretch } from "wretch";
 import { WretchError } from "wretch/resolver";
+import { type AuthStore } from "./AuthStore";
 
 export class HttpGateway {
     private wretch: Wretch;
     private withRefresh: boolean;
-    private refreshCount: number = 0;
-    private maxRefreshCount: number = 3;
+    private auth$: AuthStore | undefined;
 
-    constructor(baseURL: string, token?: string, withRefresh: boolean = false) {
+    constructor(baseURL: string, auth$?: AuthStore, withRefresh: boolean = false) {
         this.withRefresh = withRefresh;
+        this.auth$ = auth$;
         this.wretch = wretch(
-            baseURL,
-            token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+            baseURL
         )
         .catcher(401, async (error) => {
             console.error("unauthorized error", error);
@@ -27,13 +27,15 @@ export class HttpGateway {
         });
     }
 
-    async get<T>(path: string, token: string): Promise<T> {
+    async get<T>(path: string): Promise<T> {
         return await this.wretch.url(path).options({
-            headers: { Authorization: `Bearer ${token}` },
+            headers: this.auth$ ? { Authorization: `Bearer ${this.auth$.token.get()}` } : {},
         }).get().json();
     }
 
     async post<T>(path: string, body: any): Promise<T> {
-        return await this.wretch.url(path).post(body).json();
+        return await this.wretch.url(path).options({
+            headers: this.auth$ ? { Authorization: `Bearer ${this.auth$.token.get()}` } : {},
+        }).post(body).json();
     }
 }
