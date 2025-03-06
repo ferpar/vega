@@ -1,6 +1,7 @@
 import { observable } from "@legendapp/state";
 import { portfolio$ } from "./PortfolioStore";
 
+portfolio$.init();
 export const portfolioPresenter$ = observable({
     groupByAssetType: false,
     toggleGroupByAssetType: () => {
@@ -8,11 +9,11 @@ export const portfolioPresenter$ = observable({
             !portfolioPresenter$.groupByAssetType.get()
         );
     },
-    assets: () => portfolio$.assets.get(),
-    prices: () => portfolio$.prices.get(),
-    portfolio: () => portfolio$.portfolio.get(),
+    assets: () => portfolio$.state.assets.get(),
+    prices: () => portfolio$.state.prices.get(),
+    portfolio: () => portfolio$.state.portfolio.get(),
     portfolioHistory: () => {
-        const portfolios = portfolio$.portfolios.get();
+        const portfolios = portfolio$.state.portfolios.get();
         return portfolios?.map((portfolio) => ({
             date: portfolio.asOf,
             value: portfolio.positions.reduce(
@@ -22,7 +23,7 @@ export const portfolioPresenter$ = observable({
         }));
     },
     positions: () => {
-        const portfolio = portfolio$.portfolio.get();
+        const portfolio = portfolio$.state.portfolio.get();
         // If no portfolio, return empty array
         if (!portfolio) return [];
         if (!portfolio.positions) return [];
@@ -38,7 +39,7 @@ export const portfolioPresenter$ = observable({
             }));
         } else {
             // Group by asset type
-            const assets = portfolio$.assets.get();
+            const assets = portfolio$.state.assets.get();
             const breakdownObj = portfolio?.positions.reduce(
                 (acc, position) => {
                     const asset = assets.find(

@@ -1,11 +1,9 @@
 import { observable } from "@legendapp/state";
 import { auth$ } from "./AuthStore";
-import { portfolio$ } from "../modules/Portfolio/PortfolioStore";
 
 const routeObjects = [
     {
         id: "home",
-        init: portfolio$.init,
     },
     { id: "login" },
     { id: "profile" },
@@ -22,23 +20,12 @@ export const router$ = observable({
             : fallBackRoute
         : fallBackRoute,
     navigate: (route: string) => {
-        const initFn = routeObjects.find((r) => r.id === route)?.init;
-        if (initFn) initFn();
         router$.currentRoute.set(route);
         window.history.pushState({}, "", `${route}`);
     },
 });
 
-// Ensure init function runs when the page loads
-const initFn = routeObjects.find(
-    (r) => r.id === router$.currentRoute.get()
-)?.init;
-if (initFn) initFn(); // Run the function on refresh
-
 window.onpopstate = () => {
     const newRoute = window.location.pathname.replace("/", "");
     router$.currentRoute.set(newRoute);
-    // Run init function if available for the new route
-    const newInitFn = routeObjects.find((r) => r.id === newRoute)?.init;
-    if (newInitFn) newInitFn();
 };

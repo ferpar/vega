@@ -1,4 +1,5 @@
 import { observable } from "@legendapp/state";
+import { router$ } from "../../core/RouterStore";
 import { auth$ } from "../../core/AuthStore";
 import { AuthService } from "../../core/Auth";
 import { HttpGateway } from "../../core/APIGateway";
@@ -15,70 +16,93 @@ const availableDates = [
     "2021-08-01",
 ];
 
-type PortfolioStore = {
-    asOf: string;
-    assets: Asset[];
-    prices: Price[];
-    portfolio: Portfolio | null;
-    portfolios: Portfolio[];
-    loadAssets: () => Promise<void>;
-    loadPrices: () => Promise<void>;
-    loadPortfolio: () => Promise<void>;
-    loadPorfolios: () => Promise<void>;
-    init: () => Promise<void>;
-};
-
 const API_URL = import.meta.env.VITE_API_URL as string;
 const httpGateway = new HttpGateway(API_URL, auth$, true);
 
+class PortfolioStore {
+    state = observable({
+        asOf: "2021-08-01",
+        assets: [] as Asset[],
+        prices: [] as Price[],
+        portfolio: null as Portfolio | null,
+        portfolios: [] as Portfolio[],
+    });
+    private initialized = false;
 
-export const portfolio$ = observable<PortfolioStore>({
-    asOf: "2021-08-01",
-    assets: [],
-    prices: [],
-    portfolio: null,
-    portfolios: [],
-    loadAssets: async () => {
+    constructor() {
+        this.listenForNavigation();
+    }
+
+    async loadAssets() {
         const data = await safeFetch<Asset[]>("/assets");
-        portfolio$.assets.set(data || []);
-    },
-    loadPrices: async () => {
+        this.state.assets.set(data || []);
+    }
+
+    async loadPrices() {
         const data = await safeFetch<Price[]>("/prices");
-        portfolio$.prices.set(data);
-    },
-    loadPortfolio: async () => {
+        this.state.prices.set(data);
+    }
+
+    async loadPortfolio() {
         const data = await safeFetch<Portfolio[]>(
-            `/portfolios?asOf=${portfolio$.asOf.get()}`
+            `/portfolios?asOf=${this.state.asOf.get()}`
         );
-        portfolio$.portfolio.set(data[0]);
-    },
-    loadPorfolios: async () => {
+        this.state.portfolio.set(data[0]);
+    }
+
+    async loadPorfolios() {
         const data = await safeFetch<Portfolio[]>(
             `/portfolios?asOf=${availableDates.join(",")}`
         );
-        portfolio$.portfolios.set(data);
-    },
-    init: async () => {
+        this.state.portfolios.set(data);
+    }
+
+    init = async () => {
+        // if (this.initialized) {
+        //     console.log("portfolio store already initialized");
+        //     return;
+        // }
+        this.initialized = true;
         console.log("initializing portfolio store");
-        await portfolio$.loadAssets();
-        await portfolio$.loadPrices();
-        await portfolio$.loadPortfolio();
-        await portfolio$.loadPorfolios();
-    },
-});
+        await this.refresh();
+        
+    };
 
+    async refresh() {
+        console.log("refreshing portfolio store");
+        await this.loadAssets();
+        await this.loadPrices();
+        await this.loadPortfolio();
+        await this.loadPorfolios();
+    }
 
+    listenForNavigation() {
+        router$.currentRoute.onChange(() => {
+            console.log(`router change, ${router$.currentRoute.get()}`);
+            if (router$.currentRoute.get() === "home") {
+                console.log("home route, initializing portfolio store");
+                this.init();
+            }
+        });
+    }
 
-const safeFetch = async <T>(url: string, method: "get" | "post" = "get", body?: any): Promise<T> => {
-    let data
+}
+
+export const portfolio$ = new PortfolioStore();
+
+const safeFetch = async <T>(
+    url: string,
+    method: "get" | "post" = "get",
+    body?: any
+): Promise<T> => {
+    let data;
     try {
         data = await httpGateway[method]<any>(url, body);
     } catch (error) {
         console.error("error fetching", error);
         if (
             error instanceof Error &&
-            (error.message === "Forbidden" ||
-                error.message === "Unauthorized")
+            (error.message === "Forbidden" || error.message === "Unauthorized")
         ) {
             console.error("forbidden / unauthorized error, logging out");
             await AuthService.logout();
