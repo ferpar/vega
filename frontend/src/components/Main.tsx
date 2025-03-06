@@ -8,7 +8,6 @@ export const Main = observer(() => {
     const positionData = portfolioPresenter$.positions();
     const isGroupByAssetType = portfolioPresenter$.groupByAssetType.get();
     const porfolioHistory = portfolioPresenter$.portfolioHistory();
-    console.log(porfolioHistory);
 
     return (
         <div className="min-w-[80vw] p-4">

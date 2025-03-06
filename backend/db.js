@@ -33,7 +33,7 @@ const portfoliosFn = (asOf = ['2021-08-01']) => {
             ]
         },
         "2021-02-01": {
-            id: 1,
+            id: 2,
             asOf: '2021-02-01',
             positions: [
                 { id: 1, asset: "AAPL", quantity: 100, asOf: '2021-02-01', price: 110.12 },
@@ -44,7 +44,7 @@ const portfoliosFn = (asOf = ['2021-08-01']) => {
             ]
         },
         "2021-03-01": {
-            id: 1,
+            id: 3,
             asOf: '2021-03-01',
             positions: [
                 { id: 1, asset: "AAPL", quantity: 100, asOf: '2021-03-01', price: 120.12 },
@@ -55,7 +55,7 @@ const portfoliosFn = (asOf = ['2021-08-01']) => {
             ]
         },
         "2021-04-01": {
-            id: 1,
+            id: 4,
             asOf: '2021-04-01',
             positions: [
                 { id: 1, asset: "AAPL", quantity: 100, asOf: '2021-04-01', price: 130.12 },
@@ -66,7 +66,7 @@ const portfoliosFn = (asOf = ['2021-08-01']) => {
             ]
         },
         "2021-05-01": {
-            id: 1,
+            id: 5,
             asOf: '2021-05-01',
             positions: [
                 { id: 1, asset: "AAPL", quantity: 100, asOf: '2021-05-01', price: 135.12 },
@@ -77,7 +77,7 @@ const portfoliosFn = (asOf = ['2021-08-01']) => {
             ]
         },
         "2021-06-01": {
-            id: 1,
+            id: 6,
             asOf: '2021-06-01',
             positions: [
                 { id: 1, asset: "AAPL", quantity: 100, asOf: '2021-06-01', price: 140.12 },
@@ -88,7 +88,7 @@ const portfoliosFn = (asOf = ['2021-08-01']) => {
             ]
         },
         "2021-07-01": {
-            id: 1,
+            id: 7,
             asOf: '2021-07-01',
             positions: [
                 { id: 1, asset: "AAPL", quantity: 100, asOf: '2021-07-01', price: 140.12 },
@@ -99,7 +99,7 @@ const portfoliosFn = (asOf = ['2021-08-01']) => {
             ]
         },
         "2021-08-01": {
-            id: 1,
+            id: 8,
             asOf: '2021-08-01',
             positions: [
                 { id: 1, asset: "AAPL", quantity: 100, asOf: '2021-08-01', price: 145.12 },
