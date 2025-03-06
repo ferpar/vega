@@ -63,7 +63,6 @@ This tech proof could've been yet another example of a Nextjs or Tanstack Router
 But it also comes at a higher initial cost so I would only use it on applications with enough responsibility to justify it. Specially those which also need to work offline and sync when possible.
 
 ## Pending Improvements
-- listen to changes on currentRoute from the portfolioStore, cleaning up the router so that it has only one responsibilty: routing. This can be done via the .onChange listener provided by legend-state.
 - improve css and add white labeling
 - add datapoints to history graph, select different dates for the portfolio via the datapoints on the history graph
 - ... there can always be more ^^'...
