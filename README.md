@@ -27,6 +27,16 @@ Firstly, rename the .env.example files found at both backend and frontend folder
     cd frontend; npm i; npm run start
 ```
 
+#### Step 4: demo username and password
+You can always change them at the backend/server.js file but these are the initial defaults:
+
+```js
+{
+    username: 'test'
+    password: 'password'
+}
+```
+
 ## Source Code Stucture
 The source code contains the following main parts:
 - core (infrastructure and services): 

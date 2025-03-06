@@ -1,7 +1,8 @@
 import { observable } from "@legendapp/state";
 import { portfolio$ } from "./PortfolioStore";
+import { auth$ } from "../../core/AuthStore";
 
-portfolio$.init();
+if (auth$.token.get()) portfolio$.init();
 export const portfolioPresenter$ = observable({
     groupByAssetType: false,
     toggleGroupByAssetType: () => {

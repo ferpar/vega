@@ -25,6 +25,14 @@ export const router$ = observable({
     },
 });
 
+auth$.token.onChange(() => {
+    if (!auth$.token.get()) {
+        router$.currentRoute.set(fallBackRoute);
+    } else {
+        router$.currentRoute.set(defaultRoute);
+    }
+});
+
 window.onpopstate = () => {
     const newRoute = window.location.pathname.replace("/", "");
     router$.currentRoute.set(newRoute);

@@ -1,8 +1,8 @@
 import { observer } from '@legendapp/state/react';
-import { AuthService } from '../core/Auth';
+import { auth$ } from '../core/AuthStore';
 export const Logout = observer(() => {
     const handleLogout = async () => {
-        await AuthService.logout();
+        await auth$.logout();
     }
     return (
         <button onClick={handleLogout}>Logout</button>
