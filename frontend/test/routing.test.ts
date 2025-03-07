@@ -13,7 +13,7 @@ describe("routing", () => {
         expect(router$.currentRoute.get()).toBe("login");
         expect(window.location.pathname).toBe("/login");
     });
-    it("should navigate to /home page after login, /login after logout", () => {
+    it("should navigate to /home page after login, to /login after logout", () => {
         // simulate login
         auth$.token.set("token");
         expect(router$.currentRoute.get()).toBe("home");
@@ -29,7 +29,7 @@ describe("routing", () => {
             // simulate login
             auth$.token.set("token");
         });
-        it("redirects to the /home, when logged in and new route does not exist, ", () => {
+        it("redirects to the /home, when the new route does not exist, ", () => {
             router$.navigate("not-allowed");
             expect(router$.currentRoute.get()).toBe("home");
             expect(window.location.pathname).toBe("/home");
@@ -46,7 +46,7 @@ describe("routing", () => {
             auth$.token.set("token"); // cant set to "", when its already ""
             auth$.token.set("");
         });
-        it("redirects to the /login, when logged out and new route does not exist, ", () => {
+        it("redirects to the /login, when the new route does not exist, ", () => {
             router$.navigate("not-allowed");
             expect(router$.currentRoute.get()).toBe("login");
             expect(window.location.pathname).toBe("/login");
