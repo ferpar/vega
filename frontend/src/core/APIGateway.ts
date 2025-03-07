@@ -5,7 +5,7 @@ import { type AuthStoreType } from "./AuthStore";
 export class HttpGateway {
     private wretch: Wretch;
     private withRefresh: boolean;
-    private auth$: AuthStoreType | undefined;
+    auth$: AuthStoreType | undefined;
 
     constructor(baseURL: string, auth$?: AuthStoreType, withRefresh: boolean = false) {
         this.withRefresh = withRefresh;

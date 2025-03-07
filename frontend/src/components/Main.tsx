@@ -6,7 +6,7 @@ import { HistoricalChart } from "./HistoricalChart/HistoricalChart";
 
 export const Main = observer(() => {
     const positionData = portfolioPresenter$.positions();
-    const isGroupByAssetType = portfolioPresenter$.groupByAssetType.get();
+    const isGroupByAssetType = portfolioPresenter$.state.groupByAssetType.get();
     const porfolioHistory = portfolioPresenter$.portfolioHistory();
 
     return (
@@ -23,7 +23,7 @@ export const Main = observer(() => {
                     <button
                         onClick={portfolioPresenter$.toggleGroupByAssetType}
                     >
-                        {portfolioPresenter$.groupByAssetType.get()
+                        {isGroupByAssetType
                             ? "Ungroup"
                             : "Group by asset type"}
                     </button>

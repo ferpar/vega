@@ -10,7 +10,6 @@ class AuthStore {
     state = observable({
         token: "",
     });
-
     gateway: HttpGateway;
 
     constructor( gateway: HttpGateway) {
@@ -45,5 +44,4 @@ class AuthStore {
 }
 
 export const auth$ = new AuthStore(httpGateway);
-
 export type AuthStoreType = typeof auth$;

@@ -21,38 +21,53 @@ const httpGateway = new HttpGateway(API_URL, auth$, true);
 class PortfolioStore {
     state = observable({
         asOf: "2021-08-01",
+        availableDates: availableDates,
         assets: [] as Asset[],
         prices: [] as Price[],
         portfolio: null as Portfolio | null,
         portfolios: [] as Portfolio[],
     });
     private initialized = false;
+    gateway: HttpGateway;
 
-    constructor() {
+    constructor(gateway: HttpGateway) {
         this.listenForNavigation();
+        this.gateway = gateway;
     }
 
     async loadAssets() {
-        const data = await httpGateway.get<Asset[]>("/assets");
+        const data = await this.gateway.get<Asset[]>("/assets");
         this.state.assets.set(data || []);
     }
 
     async loadPrices() {
-        const data = await httpGateway.get<Price[]>("/prices");
+        const data = await this.gateway.get<Price[]>("/prices");
         this.state.prices.set(data);
     }
 
     async loadPortfolio() {
-        const data = await httpGateway.get<Portfolio[]>(
+        const data = await this.gateway.get<Portfolio[]>(
             `/portfolios?asOf=${this.state.asOf.get()}`
         );
+
+        if (!data || data.length === 0) {
+            this.state.portfolio.set(null);
+            return;
+        }
+
         this.state.portfolio.set(data[0]);
     }
 
     async loadPorfolios() {
-        const data = await httpGateway.get<Portfolio[]>(
-            `/portfolios?asOf=${availableDates.join(",")}`
+        const data = await this.gateway.get<Portfolio[]>(
+            `/portfolios?asOf=${this.state.availableDates.get().join(",")}`
         );
+        
+        if (!data || data.length === 0) { 
+            this.state.portfolios.set([]);
+            return;
+        }
+
         this.state.portfolios.set(data);
     }
 
@@ -87,4 +102,5 @@ class PortfolioStore {
 
 }
 
-export const portfolio$ = new PortfolioStore();
+export const portfolio$ = new PortfolioStore(httpGateway);
+export type PortfolioStoreType = typeof portfolio$;

@@ -1,20 +1,28 @@
 import { observable } from "@legendapp/state";
-import { portfolio$ } from "./PortfolioStore";
-import { auth$ } from "../../core/AuthStore";
+import { portfolio$, type PortfolioStoreType } from "./PortfolioStore";
 
-if (auth$.state.token.get()) portfolio$.init();
-export const portfolioPresenter$ = observable({
-    groupByAssetType: false,
-    toggleGroupByAssetType: () => {
-        portfolioPresenter$.groupByAssetType.set(
-            !portfolioPresenter$.groupByAssetType.get()
-        );
-    },
-    assets: () => portfolio$.state.assets.get(),
-    prices: () => portfolio$.state.prices.get(),
-    portfolio: () => portfolio$.state.portfolio.get(),
-    portfolioHistory: () => {
-        const portfolios = portfolio$.state.portfolios.get();
+class PortfolioPresenter {
+    state = observable({
+        groupByAssetType: false,
+    })
+    portfolio: PortfolioStoreType;  
+
+    constructor(portfolio$: PortfolioStoreType) {
+        this.portfolio = portfolio$;
+        // reach to the gateway to get the logged in status
+        const token = this.portfolio.gateway.auth$ 
+            ? this.portfolio.gateway?.auth$.state.token.get() 
+            : "";
+        if (token) this.portfolio.init(); // init store if logged in on load
+    }
+
+    toggleGroupByAssetType = () => {
+        const prevValue = this.state.groupByAssetType.get();
+        this.state.groupByAssetType.set(!prevValue);
+    }
+    
+    portfolioHistory = () => {
+        const portfolios = this.portfolio.state.portfolios.get();
         return portfolios?.map((portfolio) => ({
             date: portfolio.asOf,
             value: portfolio.positions.reduce(
@@ -22,15 +30,16 @@ export const portfolioPresenter$ = observable({
                 0
             ),
         }));
-    },
-    positions: () => {
-        const portfolio = portfolio$.state.portfolio.get();
+    }
+
+    positions = () => {
+        const portfolio = this.portfolio.state.portfolio.get();
         // If no portfolio, return empty array
         if (!portfolio) return [];
         if (!portfolio.positions) return [];
 
         // If not grouping by asset type, return positions as is
-        if (!portfolioPresenter$.groupByAssetType.get() && portfolio) {
+        if (!this.state.groupByAssetType.get() && portfolio) {
             return portfolio?.positions.map((position) => ({
                 // id: position.id,
                 label: position.asset,
@@ -40,7 +49,7 @@ export const portfolioPresenter$ = observable({
             }));
         } else {
             // Group by asset type
-            const assets = portfolio$.state.assets.get();
+            const assets = this.portfolio.state.assets.get();
             const breakdownObj = portfolio?.positions.reduce(
                 (acc, position) => {
                     const asset = assets.find(
@@ -58,5 +67,8 @@ export const portfolioPresenter$ = observable({
                 .filter((entry) => entry.value > 0);
             return breakdown;
         }
-    },
-});
+    }
+}
+
+export const portfolioPresenter$ = new PortfolioPresenter(portfolio$);
+export type PortfolioPresenterType = typeof portfolioPresenter$;
