@@ -1,14 +1,7 @@
 import { observable } from "@legendapp/state";
 import { auth$ } from "./AuthStore";
 
-const routeObjects = [
-    {
-        id: "home",
-    },
-    { id: "login" },
-    { id: "profile" },
-];
-const possibleRoutes = routeObjects.map((route) => route.id);
+const possibleRoutes = ["home", "login", "profile"];
 const defaultRoute = "home";
 const fallBackRoute = "login";
 const currentRoute = window.location.pathname.replace("/", "") || defaultRoute;
@@ -17,11 +10,16 @@ export const router$ = observable({
     currentRoute: auth$.token.get()
         ? possibleRoutes.includes(currentRoute)
             ? currentRoute
-            : fallBackRoute
+            : defaultRoute
         : fallBackRoute,
     navigate: (route: string) => {
-        router$.currentRoute.set(route);
-        window.history.pushState({}, "", `${route}`);
+        const redirectedRoute = auth$.token.get() 
+            ? possibleRoutes.includes(route) 
+                ? route 
+                : defaultRoute 
+            : fallBackRoute;
+        router$.currentRoute.set(redirectedRoute);
+        window.history.pushState({}, "", `${redirectedRoute}`);
     },
 });
 // set the url to the current route
