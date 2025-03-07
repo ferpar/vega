@@ -97,6 +97,14 @@ class PortfolioStore {
                 console.log("home route, initializing portfolio store");
                 this.init();
             }
+            if (router$.currentRoute.get() === "login") {
+                console.log("login route, clearing portfolio store");
+                this.state.assets.set([]);
+                this.state.prices.set([]);
+                this.state.portfolio.set(null);
+                this.state.portfolios.set([]);
+                this.initialized = false;
+            }
         });
     }
 
