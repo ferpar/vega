@@ -24,12 +24,14 @@ export const router$ = observable({
         window.history.pushState({}, "", `${route}`);
     },
 });
+// set the url to the current route
+window.history.pushState({}, "", `${router$.currentRoute.get()}`);
 
 auth$.token.onChange(() => {
     if (!auth$.token.get()) {
-        router$.currentRoute.set(fallBackRoute);
+        router$.navigate(fallBackRoute);
     } else {
-        router$.currentRoute.set(defaultRoute);
+        router$.navigate(defaultRoute);
     }
 });
 
