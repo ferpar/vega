@@ -1,9 +1,25 @@
-import { it, describe, expect, vi } from "vitest";
+import { it, describe, expect, vi, beforeEach } from "vitest";
 import { auth$ } from "../src/core/AuthStore";
 
-auth$.gateway.post = vi.fn().mockResolvedValue({ accessToken: "token" });
+// mock the gateway;
+auth$.gateway.post = vi
+    .fn()
+    .mockImplementation(async (url: string, data: any) => {
+        if (url === "/login") {
+            if (data.username === "username" && data.password === "password") {
+                return await Promise.resolve({ accessToken: "token" });
+            } else {
+                throw new Error("Unauthorized");
+            }
+        }
+    });
 
+// test the auth store
 describe("auth", () => {
+    beforeEach(() => {
+        // unset the token, in case it was set
+        auth$.state.token.set("");
+    });
     describe("token state", () => {
         it("starts as empty string", () => {
             expect(auth$.state.token.get()).toBe("");
@@ -28,6 +44,20 @@ describe("auth", () => {
         });
         // check the token was set
         expect(auth$.state.token.get()).toBe("token"); //token from mock
+    });
+    it("should not login with wrong credentials", async () => {
+        // act
+        try {
+            await auth$.login("wrong", "wrong");
+        } catch (e) {
+            // assert
+            expect(e.message).toBe("Unauthorized");
+            expect(auth$.state.token.get()).toBe("");
+        }
+        expect(auth$.gateway.post).toHaveBeenCalledWith("/login", {
+            username: "wrong",
+            password: "wrong",
+        });
     });
     it("should logout", async () => {
         // act

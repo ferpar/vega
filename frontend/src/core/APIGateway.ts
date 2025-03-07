@@ -16,12 +16,12 @@ export class HttpGateway {
         .catcher(401, async (error) => {
             console.error("unauthorized error", error);
             this.auth$ && await this.auth$?.logout()
-            // throw new Error("Unauthorized");
+            throw new Error("Unauthorized");
         })
         .catcher(403, async (error) => {
             console.error("forbidden error", error);
             this.auth$ && await this.auth$?.logout()
-            // throw new Error("Forbidden");
+            throw new Error("Forbidden");
         })
         .catcherFallback(async (error) => {
             console.error("unexpected error fetching", error);
