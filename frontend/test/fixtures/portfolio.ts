@@ -1,11 +1,11 @@
 export const fixtureFactory = (overrides = {}) => ({
     assets: [
-        { id: "1", name: "asset1" },
-        { id: "2", name: "asset2" },
+        { id: 1, asset: "asset1", type: "stock" },
+        { id: 2, asset: "asset2", type: "crypto" },
     ],
     prices: [
-        { assetId: "1", price: 100 },
-        { assetId: "2", price: 200 },
+        { id: 1, asset: "asset1", price: 100 },
+        { id: 2, asset: "asset2", price: 200 },
     ],
     portfolios: [
         {

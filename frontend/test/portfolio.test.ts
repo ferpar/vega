@@ -30,6 +30,7 @@ describe("portfolio presenter", () => {
     })
     beforeAll(async () => {
         // arrange
+        // login
         auth$.state.token.set("token");
         // set the asOf date and available dates
         portfolioPresenter$.portfolio.state.asOf.set("2021-01-01");
@@ -57,6 +58,26 @@ describe("portfolio presenter", () => {
         expect(portfolioPresenter$.state.groupByAssetType.get()).toBe(false);
         portfolioPresenter$.toggleGroupByAssetType();
         expect(portfolioPresenter$.state.groupByAssetType.get()).toBe(true);
+        // toggle back
+        portfolioPresenter$.toggleGroupByAssetType();
     })
-
+    it("should return portfolio history", () => {
+        expect(portfolioPresenter$.portfolioHistory()).toEqual([
+            { date: "2021-01-01", value: 500 },
+            { date: "2021-02-01", value: 400 },
+        ]);
+    })
+    it("by default does not group by asset type", () => {
+        expect(portfolioPresenter$.positions()).toEqual([
+            { label: "asset1", value: 100, price: 100, quantity: 1 },
+            { label: "asset2", value: 400, price: 200, quantity: 2 },
+        ]);
+    })
+    it("groups by asset type", () => {
+        portfolioPresenter$.toggleGroupByAssetType();
+        expect(portfolioPresenter$.positions()).toEqual([
+            { label: "stock", value: 100 },
+            { label: "crypto", value: 400 },
+        ]);
+    })
 })
