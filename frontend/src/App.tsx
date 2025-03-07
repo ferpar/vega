@@ -10,7 +10,7 @@ import "./App.css";
 
 const App = observer(() => {
     const currentRoute = router$.currentRoute.get();
-    const token = auth$.token.get();
+    const token = auth$.state.token.get();
 
     return (
         <>

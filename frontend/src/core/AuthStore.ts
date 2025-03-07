@@ -6,32 +6,44 @@ import { HttpGateway } from "./APIGateway";
 const API_URL = import.meta.env.VITE_API_URL as string;
 const httpGateway = new HttpGateway(API_URL);
 
-export const auth$ = observable({
-    token: "",
-    setToken: (token: string) => {
-        auth$.token.set(token);
-    },
-    login: async (username: string, password: string) => {
-        const data = await httpGateway.post<{ accessToken: string }>("/login", {
+class AuthStore {
+    state = observable({
+        token: "",
+    });
+
+    gateway: HttpGateway;
+
+    constructor( gateway: HttpGateway) {
+        persistObservable(this.state.token, {
+            local: "auth",
+            pluginLocal: ObservablePersistLocalStorage,
+        });
+        this.gateway = gateway;
+    }
+
+    async login(username: string, password: string) {
+        const data = await this.gateway.post<{ accessToken: string }>("/login", {
             username,
             password,
         });
-        auth$.setToken(data.accessToken);
-    },
-    logout: async () => {
-        await httpGateway.post("/logout", {});
-        auth$.setToken("");
-    },
-    refresh: async () => {
-        const data = await httpGateway.post<{ accessToken: string }>("/refresh", {});
-        console.log("refreshed token", data.accessToken);
-        auth$.setToken(data.accessToken);
+        this.state.token.set(data.accessToken);
     }
-});
 
-persistObservable(auth$.token, {
-    local: "auth",
-    pluginLocal: ObservablePersistLocalStorage,
-});
+    async logout() {
+        await this.gateway.post("/logout", {});
+        this.state.token.set("");
+    }
 
-export type AuthStore = typeof auth$;
+    async refresh() {
+        const data = await this.gateway.post<{ accessToken: string }>(
+            "/refresh",
+            {}
+        );
+        console.log("refreshed token", data.accessToken);
+        this.state.token.set(data.accessToken);
+    }
+}
+
+export const auth$ = new AuthStore(httpGateway);
+
+export type AuthStoreType = typeof auth$;

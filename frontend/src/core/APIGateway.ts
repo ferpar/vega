@@ -1,13 +1,13 @@
 import wretch, { Wretch } from "wretch";
 import { WretchError } from "wretch/resolver";
-import { type AuthStore } from "./AuthStore";
+import { type AuthStoreType } from "./AuthStore";
 
 export class HttpGateway {
     private wretch: Wretch;
     private withRefresh: boolean;
-    private auth$: AuthStore | undefined;
+    private auth$: AuthStoreType | undefined;
 
-    constructor(baseURL: string, auth$?: AuthStore, withRefresh: boolean = false) {
+    constructor(baseURL: string, auth$?: AuthStoreType, withRefresh: boolean = false) {
         this.withRefresh = withRefresh;
         this.auth$ = auth$;
         this.wretch = wretch(
@@ -31,13 +31,13 @@ export class HttpGateway {
 
     async get<T>(path: string): Promise<T> {
         return await this.wretch.url(path).options({
-            headers: this.auth$ ? { Authorization: `Bearer ${this.auth$.token.get()}` } : {},
+            headers: this.auth$ ? { Authorization: `Bearer ${this.auth$.state.token.get()}` } : {},
         }).get().json();
     }
 
     async post<T>(path: string, body: any): Promise<T> {
         return await this.wretch.url(path).options({
-            headers: this.auth$ ? { Authorization: `Bearer ${this.auth$.token.get()}` } : {},
+            headers: this.auth$ ? { Authorization: `Bearer ${this.auth$.state.token.get()}` } : {},
         }).post(body).json();
     }
 }
