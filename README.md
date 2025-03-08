@@ -47,18 +47,19 @@ The source code contains the following main parts:
     - Markup of the application
 
 ## Testing
-A minimal test was created, on the fontend/tests folder, though the main point of the architecture used in this exercise is to facilitate testing. In this instance they have been left out in order to speed up the exercise, ideally we would be starting with tests even before implementation.
+Using a reactive state manager allowed for separating Business and Presentation Logic from the Markup Rendering. This enables easier testing of functionality. 
 
-Pending to complete are tests for:
+Test were created for core components
 - router
 - authentication
+and modules
 - portfolio module
 
 ## Lack of Eslint, husky, prettier
-This aspects where intentionally ignored in this exercise, if you need to check an example of this you may do so at [this other test](https://github.com/ferpar/inditext-tst) 
+These aspects where intentionally ignored in this exercise, if you need to check an example of this you may do so at [this other test](https://github.com/ferpar/inditext-tst) 
 
 ## In Retrospect
-This tech proof could've been yet another example of a Nextjs or Tanstack Router / Query frontend with tailwind styles and hooks. I decided to take a different approach and create an architecture based on observables instead. I have found this to be a far more scalable and maintainable variant, it also happens to be very performant.
+This tech proof could've been yet another example of a Nextjs or Tanstack Router / Query frontend with tailwind styles and hooks. I decided to take a different approach and create an architecture based on observables instead. I have found this to be a far more scalable and maintainable variant, it also happens to be very performant by rerendering only the necessary components.
 
 But it also comes at a higher initial cost so I would only use it on applications with enough responsibility to justify it. Specially those which also need to work offline and sync when possible.
 
