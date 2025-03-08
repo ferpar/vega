@@ -38,10 +38,14 @@ describe("auth", () => {
         await auth$.login("username", "password");
         // assert
         // check the fn was called
-        expect(auth$.gateway.post).toHaveBeenCalledWith("/login", {
-            username: "username",
-            password: "password",
-        });
+        expect(auth$.gateway.post).toHaveBeenCalledWith(
+            "/login",
+            {
+                username: "username",
+                password: "password",
+            },
+            { credentials: "include" }
+        );
         // check the token was set
         expect(auth$.state.token.get()).toBe("token"); //token from mock
     });
@@ -54,10 +58,14 @@ describe("auth", () => {
             expect(e.message).toBe("Unauthorized");
             expect(auth$.state.token.get()).toBe("");
         }
-        expect(auth$.gateway.post).toHaveBeenCalledWith("/login", {
-            username: "wrong",
-            password: "wrong",
-        });
+        expect(auth$.gateway.post).toHaveBeenCalledWith(
+            "/login",
+            {
+                username: "wrong",
+                password: "wrong",
+            },
+            { credentials: "include" }
+        );
     });
     it("should logout", async () => {
         // act

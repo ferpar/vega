@@ -12,7 +12,7 @@ class AuthStore {
     });
     gateway: HttpGateway;
 
-    constructor( gateway: HttpGateway) {
+    constructor(gateway: HttpGateway) {
         persistObservable(this.state.token, {
             local: "auth",
             pluginLocal: ObservablePersistLocalStorage,
@@ -21,10 +21,16 @@ class AuthStore {
     }
 
     async login(username: string, password: string) {
-        const data = await this.gateway.post<{ accessToken: string }>("/login", {
-            username,
-            password,
-        });
+        const data = await this.gateway.post<{ accessToken: string }>(
+            "/login",
+            {
+                username,
+                password,
+            },
+            {
+                credentials: "include",
+            }
+        );
         this.state.token.set(data.accessToken);
     }
 
@@ -36,7 +42,10 @@ class AuthStore {
     async refresh() {
         const data = await this.gateway.post<{ accessToken: string }>(
             "/refresh",
-            {}
+            {},
+            {
+                credentials: "include",
+            }
         );
         console.log("refreshed token", data.accessToken);
         this.state.token.set(data.accessToken);

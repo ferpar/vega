@@ -51,7 +51,7 @@ app.post("/login", (req, res) => {
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true, // Ensure it's sent only over HTTPS
-        sameSite: "strict",
+        // sameSite: "none",
         path: "/refresh",
     });
 
