@@ -8,16 +8,16 @@ const gateway = portfolioPresenter$.portfolio.gateway;
 gateway.get = vi
     .fn()
     .mockImplementation(async (url: string) => {
-        if (url === "/assets") {
+        if (url === "/api/assets") {
             return await Promise.resolve(fixtureFactory().assets); 
         }
-        if (url === "/prices") {
+        if (url === "/api/prices") {
             return await Promise.resolve(fixtureFactory().prices);
         }
-        if (url === "/portfolios?asOf=2021-01-01") {
+        if (url === "/api/portfolios?asOf=2021-01-01") {
             return await Promise.resolve(fixtureFactory().portfolios.slice(0, 1));
         }
-        if (url === "/portfolios?asOf=2021-01-01,2021-02-01") {
+        if (url === "/api/portfolios?asOf=2021-01-01,2021-02-01") {
             return await Promise.resolve(fixtureFactory().portfolios);
         }
     });
@@ -46,12 +46,12 @@ describe("portfolio presenter", () => {
         expect(portfolioPresenter$.portfolio.state.prices.get()).toEqual(fixtureFactory().prices);
     })
     it("should load portfolio", () => {
-        expect(gateway.get).toHaveBeenCalledWith("/portfolios?asOf=2021-01-01");
+        expect(gateway.get).toHaveBeenCalledWith("/api/portfolios?asOf=2021-01-01");
         expect(portfolioPresenter$.portfolio.state.portfolio.get()).toEqual(fixtureFactory().portfolios[0]);
     })
     it("should load portfolios", async () => {
         await portfolioPresenter$.portfolio.loadPorfolios();
-        expect(gateway.get).toHaveBeenCalledWith("/portfolios?asOf=2021-01-01,2021-02-01");
+        expect(gateway.get).toHaveBeenCalledWith("/api/portfolios?asOf=2021-01-01,2021-02-01");
         expect(portfolioPresenter$.portfolio.state.portfolios.get()).toEqual(fixtureFactory().portfolios);
     })
     it("should toggle group by asset type", () => {

@@ -36,18 +36,18 @@ class PortfolioStore {
     }
 
     async loadAssets() {
-        const data = await this.gateway.get<Asset[]>("/assets");
+        const data = await this.gateway.get<Asset[]>("/api/assets");
         this.state.assets.set(data || []);
     }
 
     async loadPrices() {
-        const data = await this.gateway.get<Price[]>("/prices");
+        const data = await this.gateway.get<Price[]>("/api/prices");
         this.state.prices.set(data);
     }
 
     async loadPortfolio() {
         const data = await this.gateway.get<Portfolio[]>(
-            `/portfolios?asOf=${this.state.asOf.get()}`
+            `/api/portfolios?asOf=${this.state.asOf.get()}`
         );
 
         if (!data || data.length === 0) {
@@ -60,7 +60,7 @@ class PortfolioStore {
 
     async loadPorfolios() {
         const data = await this.gateway.get<Portfolio[]>(
-            `/portfolios?asOf=${this.state.availableDates.get().join(",")}`
+            `/api/portfolios?asOf=${this.state.availableDates.get().join(",")}`
         );
         
         if (!data || data.length === 0) { 

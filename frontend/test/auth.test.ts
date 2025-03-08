@@ -5,7 +5,7 @@ import { auth$ } from "../src/core/AuthStore";
 auth$.gateway.post = vi
     .fn()
     .mockImplementation(async (url: string, data: any) => {
-        if (url === "/login") {
+        if (url === "/auth/login") {
             if (data.username === "username" && data.password === "password") {
                 return await Promise.resolve({ accessToken: "token" });
             } else {
@@ -39,7 +39,7 @@ describe("auth", () => {
         // assert
         // check the fn was called
         expect(auth$.gateway.post).toHaveBeenCalledWith(
-            "/login",
+            "/auth/login",
             {
                 username: "username",
                 password: "password",
@@ -59,7 +59,7 @@ describe("auth", () => {
             expect(auth$.state.token.get()).toBe("");
         }
         expect(auth$.gateway.post).toHaveBeenCalledWith(
-            "/login",
+            "/auth/login",
             {
                 username: "wrong",
                 password: "wrong",
@@ -72,7 +72,7 @@ describe("auth", () => {
         await auth$.logout();
         // assert
         // check the fn was called
-        expect(auth$.gateway.post).toHaveBeenCalledWith("/logout", {});
+        expect(auth$.gateway.post).toHaveBeenCalledWith("/auth/logout", {});
         // check the token was set
         expect(auth$.state.token.get()).toBe("");
     });

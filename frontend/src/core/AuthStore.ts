@@ -22,7 +22,7 @@ class AuthStore {
 
     async login(username: string, password: string) {
         const data = await this.gateway.post<{ accessToken: string }>(
-            "/login",
+            "/auth/login",
             {
                 username,
                 password,
@@ -35,13 +35,13 @@ class AuthStore {
     }
 
     async logout() {
-        await this.gateway.post("/logout", {});
+        await this.gateway.post("/auth/logout", {});
         this.state.token.set("");
     }
 
     async refresh() {
         const data = await this.gateway.post<{ accessToken: string }>(
-            "/refresh",
+            "/auth/refresh",
             {},
             {
                 credentials: "include",
