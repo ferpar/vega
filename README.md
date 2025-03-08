@@ -1,17 +1,31 @@
 # Vega
 
-This exercise showcases a modular frontend with a reactive core, custom router and authentication. It also includes custom charts made with D3js and React. 
+This exercise showcases a modular frontend with a reactive core that separates logic from rendering. It is an example of the humble object pattern separating complex logic from hard-to-test components (Markup / React).
 
-The focus was put on these areas instead of the css and visual aspect, given more time more polish would be put on the aesthetics and design but it was decided to focus on the architecture. In case it is useful, I already have other [demos](https://fernandopayala.com) showcasing layout and visual design. In the same vein white labeling and theming has been left out of the exercise.
+A custom router was built instead of relying on a framework. Authentication has been implemented via JWT tokens, including refresh tokens as httpOnly secure cookies. Additionally, the Charts were implemented with D3js and Framer Motion. 
 
-## Project Folders
-This project has two folders:
-- backend
-- frontend
-Backend holds a test server meant for this exercise, a minimal expressjs app for Authorization and some mock endpoints.
-The frontend folder contains the main part of this exercise, a React SPA with a scalable, modular architecture.
+Within this architecture, cross-cutting concerns are found in the /core folder
+- gateways
+- authentication
+- router
 
-## Installation
+and the main logic can be found in the /modules folder.
+- portfolio
+
+The modules are black boxes and can be tested separately from the markup / rendering of the application. They have the following structure:
+
+Gateway || Store (holds state and main Logic) >> Presenter ( presentation logic) || Markup (React)
+
+Whereby the module comprises the Store and Presenter, whereas Gateways and Markup are on the outside of the blackbox itself. In order to test, it is simple to mock the inputs by stubbing the return of Gateway methods, and check the outputs of the Presenter (additionally one may trigger methods of the presenter to emulate the actions of a user).
+
+The layout and CSS has been left out due to time constraints. In case it is useful, I already have [other projects](https://fernandopayala.com) showcasing layout and visual design. In the same vein white labeling and theming has been left out of the exercise.
+
+## Demo
+You may check this project live [here](https://vega-qq8m.onrender.com). 
+
+It might take a up to a minute for the server to spin up if it had been shut down due to inactivity (Render is a free service). On subsequent loads it shouldn't be an issue.
+
+## Local Installation
 
 ### Env variables
 #### Step 1: Rename .env.example to .env
@@ -36,6 +50,15 @@ You can always change them at the backend/server.js file but these are the initi
     password: 'password'
 }
 ```
+
+
+## Project Folders
+This project has two folders:
+- backend
+- frontend
+Backend holds a test server meant for this exercise, a minimal expressjs app for Authorization and some mock endpoints.
+The frontend folder contains the main part of this exercise, a React SPA with a scalable, modular architecture.
+
 
 ## Source Code Stucture
 The source code contains the following main parts:
