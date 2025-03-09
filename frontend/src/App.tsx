@@ -6,7 +6,6 @@ import { Login } from "./components/Login";
 import { Profile } from "./components/Profile";
 import { Logout } from "./components/Logout";
 import { Nav } from "./components/Nav";
-import "./App.css";
 
 const App = observer(() => {
     const currentRoute = router$.currentRoute.get();
